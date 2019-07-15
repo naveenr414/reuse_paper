@@ -44,19 +44,19 @@ We performed some pre-processing the comment text. We removed any snippets of co
 For each comment, we kept track of heuristics and also used external libraries to evaluate comments. A full of table of features we considered is below. 
 
 \begin{table}[]
-	\begin{tabular}{ll}
-		\textbf{Feature} & \textbf{Description}                                                                                        \\
-		Num Emojis       & Number of Emojis                                                                                            \\
-		Num Urls         & Number of URLs                                                                                              \\
-		Length           & Length in Characters                                                                                        \\
-		Stanford Polite  & Using CITATION we give a 0-1 score of politeness, where 0 is the least polite, and 1 is the most polite     \\
-		Perspective      & Using CITATION, we give a 0-1 score of how toxic comments are, where 0 is the least toxic and 1 is the most \\
-		Subjectivity     & Using TextBlob sentiment, get a 0-1 score of subjectivity, where 1 is the most subjective                   \\
-		Polarity         & Using TextBlob sentiment, get a -1-1 score of polarity, where 1 and -1 are the most subjective              \\
-		NLTK Score       & Using VADER sentiment analyzer (CITATION), we find the compound sentiment score                             \\
-		TF IDF           & Use TF IDF word frequencies                                                                                 \\
-		Anger            & Number of words from Anger Lexicon (CITATION)                                                               \\
-		Negative         & Number of words from Negative Lexicon (CITATION)                                                           
+	\begin{tabular}{|p{2cm}|p{6cm}|} \hline
+		\textbf{Feature} & \textbf{Description}                                                                                        \\ \hline
+		Num Emojis       & Number of Emojis                                                                                             \\ \hline
+		Num Urls         & Number of URLs                                                                                              \\ \hline
+		Length           & Length in Characters                                                                                        \\ \hline
+		Stanford Polite  & Using \cite{b8} we give a 0-1 score of politeness, where 0 is the least polite, and 1 is the most polite     \\ \hline
+		Perspective      & Using \cite{b7}, we give a 0-1 score of how toxic comments are, where 0 is the least toxic and 1 is the most \\ \hline
+		Subjectivity     & Using TextBlob sentiment, get a 0-1 score of subjectivity, where 1 is the most subjective                   \\ \hline
+		Polarity         & Using TextBlob sentiment, get a -1-1 score of polarity, where 1 and -1 are the most subjective              \\ \hline
+		NLTK Score       & Using VADER sentiment analyzer \cite{b9}, we find the compound sentiment score                             \\ \hline
+		TF IDF           & Use TF IDF word frequencies                                                                                 \\ \hline
+		Anger            & Number of words from Anger Lexicon \cite{b10}                                                               \\ \hline
+		Negative         & Number of words from Negative Lexicon \cite{b10} \\  \hline                                                           
 	\end{tabular}
 \end{table}
 
@@ -68,17 +68,17 @@ In addition to the features mentioned earlier, we use three other techniques to 
 
 \textbf{Context} - Comments don't occur in a vacuum (CITATION). As a result, we try and get context from the comments immoderately preceding and following it in the discussion. We get the features for those comments, and use those in addition to the features about the current comment. If there is no surrounding comments, then the context is set to 0. 
 
-\textbf{Anger Direction} - Many toxic classifiers pick up on phrases that indicate self directed anger (such as "I'm so stupid"). These typically do not interfere with a disccussion or make it toxic, and so they typically become false positives. We use a classifier from CITATION, that classifies the direction of anger as either self, other person or object. We use this classifier to label any comment that has self directed anger as non toxic. 
+\textbf{Anger Direction} - Many toxic classifiers pick up on phrases that indicate self directed anger (such as "I'm so stupid"). These typically do not interfere with a disccussion or make it toxic, and so they typically become false positives. We use a classifier from \cite{b3}, that classifies the direction of anger as either self, other person or object. We use this classifier to label any comment that has self directed anger as non toxic. 
 
 \textbf{Software Engineering Words} - There are vocabulary differences between Software Engineering and regular English. Sometimes, these issues interfere with a classifier's ability to predict a comment as toxic (such as the difference in the meaning of the word "bug"). We combat this by first finding "Software Engineering specific words", or words that are significantly more common in Software Engineering than regular English. We see whether removing each of these words from comments predicted as toxic significantly lowers the predicted toxicity, and if so, we label the comment as non-toxic. 
 
-To determine whether a word is "Software Engineering specific", we create a corpus of Software Engineering text from randomly sampling 10K random github issues. To determine specificity, we use a Chi Squared Distribution with effect size at $phi=0.3$. To determine whether the predicition is significantly lower, we check whether the difference in perspective score between with and without the word is $<\alpha$, where $\alpha$ is a hyperparameter. 
+To determine whether a word is "Software Engineering specific", we create a corpus of Software Engineering text from randomly sampling 10K random github issues. To determine specificity, we use a Chi Squared Distribution with effect size at $phi=0.3$. \cite{b1}\cite{b4} \cite{b5} To determine whether the predicition is significantly lower, we check whether the difference in perspective score between with and without the word is $<\alpha$, where $\alpha$ is a hyperparameter. 
 
 \includegraphics[width=6cm]{pipeline.png}
 
 
 \subsection{Validation} 
-To find the best parameters and features and validate our model, we perform 10-fold cross validation. Within each fold, we perform 10-fold cross validation on the train dataset, splitting the train dataset into a train and validation dataset (CITATION). We iteratively add features (depending on whether the model performs better) (CITATION), and we grid search hyperparameters (C=[.01,.1,1,10,100], $\gamma$=[1,2,4,8], $\alpha$=[.05,.1,.2]) and we also search over the presence/non-presence of each of the three methods from the previous subsection. We select the best hyperparameters from the train-validation split, and use that for the train-test split. To find the best set of hyperparameters overall, we pick the most common value for each hyperparameter from the train-test split. 
+To find the best parameters and features and validate our model, we perform 10-fold cross validation. Within each fold, we perform 10-fold cross validation on the train dataset, splitting the train dataset into a train and validation dataset (CITATION). Because of the imbalance in the training dataset, we undersample, with a ratio $r$ between non-toxic and toxic examples, where $r$ is a hyperparameter. We iteratively add features (depending on whether the model performs better) (CITATION), and we grid search hyperparameters (C=[.01,.1,1,10,100], $\gamma$=[1,2,4,8], $\alpha$=[.05,.1,.2], $r$=[1,1.5,2]) and we also search over the presence/non-presence of each of the three methods from the previous subsection (essentially in the same way we add features, except we process these three at the end). We select the best hyperparameters from the train-validation split, and use that for the train-test split. To find the best set of hyperparameters overall, we pick the most common value for each hyperparameter from the train-test split. 
 
 To quantify model performance, we use F-Scores (CITATION) at $\beta$=0.5. We use $\beta$=0.5, because we want a high precision value so that the model can accurately select toxic comments when run over large datasets. Other papers have also used $\beta$=0.5 (CITATION). 
 
@@ -106,8 +106,11 @@ Conclusion
 \bibitem{b3} Gachechiladze, Daviti, et al. "Anger and its direction in collaborative software development." 2017 IEEE/ACM 39th International Conference on Software Engineering: New Ideas and Emerging Technologies Results Track (ICSE-NIER). IEEE, 2017.
 \bibitem{b4} Scott, Mike, and Christopher Tribble. Textual patterns: Key words and corpus analysis in language education. Vol. 22. John Benjamins Publishing, 2006.
 \bibitem{b5} Bonett, Douglas G. "Transforming odds ratios into correlations for meta-analytic research." (2007): 254.
-\bibitem{b6} Görnitz, Nico, et al. "Toward supervised anomaly detection." Journal of Artificial Intelligence Research 46 (2013): 235-262.
-
+\bibitem{b6} Görnitz, Nico, et al. "Toward supervised anomaly detection." Journal of Artificial Intelligence Research 46 (2013): 235-262. 
+\bibitem{b7}  “https://www.perspectiveapi.com/,”
+\bibitem{b8} Danescu-Niculescu-Mizil, Cristian, et al. "A computational approach to politeness with application to social factors." arXiv preprint arXiv:1306.6078 (2013).
+\bibitem{b9} Hutto, Clayton J., and Eric Gilbert. "Vader: A parsimonious rule-based model for sentiment analysis of social media text." Eighth international AAAI conference on weblogs and social media. 2014.
+\bibitem{b10} Zhang, Justine, et al. "Conversations gone awry: Detecting early signs of conversational failure." arXiv preprint arXiv:1805.05345 (2018).
 
 
 \end{thebibliography}
