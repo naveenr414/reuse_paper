@@ -10,6 +10,7 @@
 \graphicspath{ {./} }
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
 \begin{document}
 
 \title{Toxic issues in Github\\}
@@ -27,82 +28,151 @@ Keywords
 \section{Introduction}
 Introduction
 \section{Related Works}
-Related works 
+
+We look into how people behave on Github. There has been past literature on how people behave online and the adverse effect it has on communities. There's also been past literature on how Open Source functions as a community, and how recent trends have the potential to have negative effects. We build on these and investigate new trends through analyzing human behavior. 
+
+\subsection{Behavior in Online Communities} 
+
+People contribute to online communities for a variety of reasons. Online contributions can be viewed as a form of gift giving \cite{wang2003assessing}. In particular, social capital and the ease of communication help facilitate and motivate people to contribute to online communities. Participation in online communities is affected primarily by three quantities: motivation of the individual to contribute, ease of use for the medium, and the personalities present in the community. 
+
+The motivation to contribute varies depending on the type of online community. For Open Source communities, both monetary rewards and recognition from the community \cite{antikainen2010rewarding}. Open Source communities, and communities in general, feature a diverse set of motivations or reasons behind why members contribute. 
+
+Member interactions are further diversified by the different types of personalities within the community. More active people people tend to be extroverted members of the community, helping other members become a part of the community \cite{wang2003assessing}. People who tend to posses leadership qualities or tend to be more innovative tend to be the ones who contribute the most to online communities \cite{jadin2013personality}. 
+
+Member interactions can be soured by a lack of politeness in online communities. In some communities, a lack of politeness can lead to greater participation, while the opposite is true in other communities \cite{burke2008mind}. Communities that involve debate over controversial topics, such as politics or atheism, tend to have more discussion when people are less polite, while more technical communities, such as programming and electronics, tends to be negatively impacted by a lack of politeness. Similarly, toxicity, which refers to hate speech and abuse among other things, limits the growth of online communities \cite{mohan2017impact}. 
+
+\subsection{Detecting Sentiment} 
+
+Detecting sentiment, and by extension, politeness and toxicity, has been widely studied. Much of this work has dealt with detecting hate speech in online communities \cite{warner2012detecting}. These works use classifiers or deep learning to classify hate speech. Detecting politeness is done through finding specific patterns of talking that indicate either an increase or decrease in politeness \cite{danescu2013computational}. As an example, using words of gratitude, such as "I appreciate" increases the politeness of a sentence, while starting with a 2nd person pronoun, scuh as "you've", decreases the politeness. 
+
+
+\subsection{Sustainability in Open Source} 
+
+Open source can be viewed as an online community and includes a central governing system in some cases \cite{o2007emergence}. Much of the literature about online communities applies to open source. 
+
+Open source features projects, which are created by maintainers, and are used by users. These users can create issues which are addressed by other users or maintainers. This system creates a sort of relationship between the users of a project and the maintainers of that project. The maintainers for these projects are typically volunteers \cite{raymond1999cathedral}. 
+
+Many of the maintainers maintain projects because of the benefits to the their portfolio, which helps them land future jobs \cite{eghbal2016roads}. Many also contribute because they feel an obligation to those who depend on their code. The increase in the number of users in the Open Source community has not only increased the strain on developers, but also lead to an increase in toxic interactions, because people view themselves not as members of the community, but as users of software. This leads to a decrease in the sense of community and bond with the maintainers, making it easier for people to disparage maintainers.
+
+Open source has several new trends that might potentially be related to the increase in demand on maintainers.  
 
 \section{Data and Methods}
-We designed a classification scheme to identify potentially toxic issues and comments on Github. We used SVM classifiers along with leveraging differences between Software Engineering and English vocabularies to classify issues accurately. We demonstrated that our scheme performs well for both in-sample and out-of-sample testing, and we later used our scheme to analyze trends in Github. 
+We used SVM classifiers and leveraged differences between Software Engineering and English vocabularies to classify Github comments. We used our comment classifications to create issue classifications. We demonstrated that our classifier performs well for both in-sample and out-of-sample testing, and we later used our classifier to analyze trends in Github. 
 
 \subsection{Data}
-Our source of data is the June 2019 version of GHTORRENT \cite{b2} , a database of Github issues and comments. The database contained over 80 million issues, some of which were deleted on Github but still available on the database. Each issue had metadata about its origin including creator and creation date, and each comment contained its text and the issue it's associated with. 
+Our source of data is the June 2019 version of GHTORRENT \cite{Gousi13}, a database of Github issues and comments. The database contained over 80 million issues, including deleted issues. Each issue has metadata about its origin including creator and creation date, and each comment contains its text and the associated issue. 
 
+\subsection{Train Data} 
 
-To predict toxic issues, we created a training dataset by labeling  comment toxicity, and then labeled issues as toxic if they contained one or more toxic comments. To find examples of toxic comments, we labeled issues that were marked by Github as "too heated." We labeled 179 issues, of which 73 were toxic and 106 were non-toxic. To increase our training size, we labeled 225 random issues on github, all of which were non-toxic. Finally, we used our Active Learning procedure to label 51 more issues, of which 20 were toxic and 31 were non toxic. In the end, our training data set contained 455 issues, with 93 toxic issues, and 362 non-toxic issues. 
+To predict toxic issues, we created a training dataset by labeling  comment toxicity, and then labeled issues as toxic if they contained one or more toxic comments. We labeled the comments from 422 Github issues that were either marked as "too heated" or contained the word "attitude." We searched for these issues, because they were more likely toxic, either because Github had already flagged them as possibly toxic, or becuase someone might have been reprimanding another person's attitude. After removing non-English issues and issues that weren't in GHTorrent, we were left with 386 issues, of which 167 were toxic and 219 were non toxic. We split this equally into a train set and an external validation set, with the train set getting 84 toxic and 109 non-toxic, and the external validation set getting 83 toxic and 110 non-toxic. Becuase the prevelance of toxic issues is low in the real world, we added more non-toxic issues to the training set by selecting 300 random issues, filtering out non-English and non-empty issues, and adding the results 225 issues as non-toxic issues. the process is outlined in figure 1. 
 
+\begin{figure}
+	\includegraphics[width=10cm]{data_flow.png}
+	\caption{Where data comes from}
+\end{figure}
 
-For each comment, we kept track of heuristics and external metrics used to score comments. 
+\subsection{Classification Overview} 
+
+We used an SVM model along with two filters that leverage NLP information to classify comments. We run the filters over issues that are classified as toxic to remove possible false positives. After classifying all the comments associated with an issue, we classify the issue as toxic if it contains one or more comments classified as toxic. One toxic comment can derail a conversation and cause it to be toxic, which is why we classify issues in this manner.  
+
+\begin{figure}
+	\includegraphics[width=10cm]{pipeline.png}
+	\caption{Pipeline}
+\end{figure}
+
+\subsection{SVM Classifier}
+
+We removed comments comments that were non-English through the langdetect Python library (CITATION) because we were building a classifier only to classify comments in English. We also removed comments that were empty because there was no text to classify. 
+
+We used an SVM to classify comments as toxic or non-toxic because SVMs are often used for text classification purposes \cite{joachims1998text} and because SVMs outperformed Naive Bayes, Random Forest, and Logistic Regression. 
+
+The SVM uses three types of features: comment metadata, API scores, and text based features. We listed all features in Table I. 
+
 \begin{table}[]
-	\begin{tabular}{|p{2cm}|p{6cm}|} \hline
+	\begin{tabular}{ p{2cm} p{6cm}} \hline
 		\textbf{Feature} & \textbf{Description}                                                                                        \\ \hline
-		Num Emojis       & Number of Emojis                                                                                             \\ \hline
-		Num Urls         & Number of URLs                                                                                              \\ \hline
-		Length           & Length in Characters                                                                                        \\ \hline
-		Stanford Polite  & Using \cite{b8} we give a 0-1 score of politeness, where 0 is the least polite, and 1 is the most polite     \\ \hline
-		Perspective      & Using \cite{b7}, we give a 0-1 score of how toxic comments are, where 0 is the least toxic and 1 is the most \\ \hline
-		Subjectivity     & Using TextBlob sentiment, get a 0-1 score of subjectivity, where 1 is the most subjective                   \\ \hline
-		Polarity         & Using TextBlob sentiment, get a -1-1 score of polarity, where 1 and -1 are the most subjective              \\ \hline
-		NLTK Vader       & Using VADER sentiment analyzer \cite{b9}, we find the compound sentiment score                             \\ \hline
-		TF IDF           & Use TF IDF word frequencies                                                                                 \\ \hline
-		Anger            & Number of words from Anger Lexicon \cite{b10}                                                               \\ \hline
-		Negative         & Number of words from Negative Lexicon \cite{b10} \\  \hline                                                           
+		Num Emojis       & Number of Emojis                                                                                             \\
+		Num Urls         & Number of URLs                                                                                              \\ 
+		Length           & Length in Characters                                                                                        \\
+		Stanford Polite  & Using \cite{danescu2013computational} we give a 0-1 score of politeness, where 0 is the least polite, and 1 is the most polite     \\ 
+		Perspective      & Using \cite{perspective}, we give a 0-1 score of how toxic comments are, where 0 is the least toxic and 1 is the most \\
+		Subjectivity     & Using TextBlob sentiment, get a 0-1 score of subjectivity, where 1 is the most subjective                   \\ 
+		Polarity         & Using TextBlob sentiment, get a -1-1 score of polarity, where 1 and -1 are the most subjective              \\
+		NLTK Vader       & Using VADER sentiment analyzer \cite{hutto2014vader}, we find the compound sentiment score                             \\
+		TF IDF           & Use TF IDF word frequencies                                                                                 \\ 
+		Anger            & Number of words from Anger Lexicon \cite{zhang2018conversations}                                                               \\ 
+		Negative         & Number of words from Negative Lexicon \cite{zhang2018conversations} \\  \hline                                                           
 	\end{tabular}
+\\ 
+\caption{List of Features} 
 \end{table}
 
-\subsection{Model} 
 
-To label a set of issues, we first filtered out non-English or epmty issues. We used an SVM to classify comments as toxic or non-toxic because SVMs are often used for text classification purposes \cite{b11} and because SVMs outperformed other classifiers we tried.
+\textbf{Comment Metadata} - We calculated the number of emojis, the number of URLs and the length of the text (in characters), and used these as features for our SVM. We used these features in case there were structural differences between toxic and non-toxic comments.  
 
-We used two additional techniques along with our classifier to improve performance. 
+\textbf{API Scores} - Existing NLP libraries provide good algorithms for sentiment analysis. Though not designed for Software Engineering, they provide good approximations of sentiment in Software Engineering. We used Google's Perspective API, Stanford Politeness API, NLTK's VADER, and TextBlob's Subjectivity and Polarity. We used these APIs because they give numerical values for the sentiment of a comment. We tried using SentiStrength, but the library is unable to parse large chunks of text (such as entire comments). 
 
-\textbf{Anger Direction} - We filtered out self directed toxicity to avoid falsely classifying phrases such as "I'm so stupid." These phrases typically indicate self loathing rather than toxicity, and would not contribute to the toxicity of a discussion. We used a classifier from \cite{b3}, that classifies the direction of anger as either self, other person or object, and remove all comments where the anger direction is self.  
+\textbf{Text Based Features} - We store comment text as TF-IDF unigrams, and use these as a feature. We also used several lists of lexicons  \cite{zhang2018conversations}, such as a list of words that indicate anger. We count the number of words from each list, and use each count as a seperate feature. Because of the large number of lexicon lists, we ran all of these together in an SVM classifier, and found that anger leixcons and negative lexicons were the most improtant to predicting toxicity. 
 
-\textbf{Software Engineering Words} - Words in software engineering could have different connotations from words in English, such as differences in the meaning of the word "bug." To alleviate this issue, we identified words that are significantly more frequent in software engineering using Log Odds with Dirichlet prior \cite{b12}. Our software engineering corpus came from a random sample of 10K github issues, and our regular English corpus came from the Python library wordfreq \cite{b13} We removed each of these words, re-compute the features for the comment, and re-classify using the new features (We don't do this yet, but we should do this).  
-
-
-\includegraphics[width=6cm]{pipeline.png}
+Two challenges were to avoid falsely classifying self-directed toxicity and to deal with words that have a different meaning in Sofware Engineering. To tackle these, we introduced two additional filters. 
 
 
+\subsection{Anger Direction} 
+
+We filtered out self directed toxicity to avoid falsely classifying phrases such as "I'm so stupid." These phrases typically indicate self loathing rather than toxicity, and would not contribute to the toxicity of a discussion. We used an SVM classifier with unigram features \cite{gachechiladze2017anger}, that classifies the direction of anger as either self, other person or object, and remove all comments where the anger direction is self.  
+
+\subsection{Software Engineering Words} 
+
+Words in software engineering could have different connotations from words in English, such as differences in the meaning of the word abort. To alleviate this issue, we identified words that are significantly more frequent in software engineering using Log Odds with Dirichlet prior \cite{monroe2008fightin}. The method assumes words follow a Dirichlet distribution, and uses that to convert odds to a z-score. We defineds words that were specific to Software Engineering to be words where $\alpha<0.05$ which corresponds to $z>1.645$. Our software engineering corpus came from a random sample of 10K github issues, and our regular English corpus came from the Python library wordfreq \cite{speer2016wordfreq}, which uses seven text sources including the Wikipdia corpus. We replaced each of the Software Engineering specific words with a filler word, so that the sentence structure would not be modified,, re-computed the features for the comment. If the modified comment is classified as non-toxic, then we re-classifed the original comment as non-toxic. 
+\section{Validation} 
 \subsection{Internal Validation} 
-We used 10-fold nested cross validation to tune our hyperparameters and evaluate our model \cite{b14}. Because of the imbalance in the training dataset, for each train-test split, we adjusted the class weights, with a ratio $r$ between non-toxic and toxic examples, where $r$ is a hyperparameter. We tried using ADASYN and SMOTE, but neither provided any significant improvement. We grid searched over hyperparameters $\gamma=\{1,2,2.5,3\}$, $C=\{0.01,0.05,0.1,0.5,1,10\}$ and $r=\{1,1.5,1.75,2,2.25\}$ in our train-validation split. We iteratively added features to find the best feature combination.
+We used 10-fold nested cross validation to tune our hyperparameters and evaluate our model \cite{fearn2010double}. Because of the imbalance in the training dataset, for each train-test split, we adjusted the class weights, with a ratio $r$ between non-toxic and toxic examples, where $r$ is a hyperparameter. We tried using ADASYN and SMOTE, but neither provided any significant improvement over using class weights. We grid searched over hyperparameters $\gamma=\{1,2,2.5,3\}$, $C=\{0.01,0.05,0.1,0.5,1,10\}$ and $r=\{1,1.5,1.75,2,2.25\}$ in our train-validation split. We iteratively added features from Table 1 to find the best feature combination.
 
-To quantify model performance, we used $F_{0.5}$ score, because of the imbalance of our dataset, and because we wanted a precise classifier when run over larger datasets. 
+To quantify model performance, we used $f_{0.5}$ score, because of the imbalance of our dataset, and because we wanted a precise classifier when run over larger datasets. 
 
 \subsection{Internal Validation Results} 
 
-Our model performed best when using Politeness, Perspective and filtering out Anger Direction and Software Engineering Words, at $\gamma=2$, $C=0.05$, and $r=2$. We obtained a score of $f_{0.5}=0.736$, with a precision of $0.91$ and recall of $0.42$. We demonstrated that the addition of new features does not significantly improve model performance. Additionally, the removal of features from our model significantly detracted from model performance. 
+Our model performed best when using Politeness, Perspective and filtering out Anger Direction and Software Engineering Words, at $\gamma=2$, $C=0.05$, and $r=2$. We obtained a score of $f_{0.5}=0.736$, with a precision of $0.91$ and recall of $0.42$. Figure 2 demonstrates that removing features from our model decreases model performance, while figure 3 demonstrates that adding features to our model does not improve performance.  
 
+\begin{figure} 
 \includegraphics[width=6cm]{feature.png}
-
-\subsection{External Validation} 
-
-We performed external validation by selecting, at random 100K issues from Github. We filtered out non-English and non-Empty issues, and classified them. We selected 100 issues that were classified as toxic, and classified them by hand in an effort to demonstrate the precision of our model. 
+\includegraphics[width=6cm]{remove_features.png}
+\caption{Our baseline cannot be improved by adding features, and would be hurt by removing features} 
+\end{figure} 
 
 \subsection{External Validation Results} 
+We ran our classifier on the held-out labeled examples. We got a recall of 27\% and a precision of 45\%. 
 
 \section{Experiments} 
-\subsection{Toxicity over time} 
-We explored whether the percentage of toxic comments on Github has increased over time. Because of the infeasibility of classifying every issue on Github, we selected all the issues from each second monday from January 2012-December 2018. We selected the date so to account for confounding factors such as the day of the week, or the time of the month. (CITATION?)
 
-We saw that the number of issues has increased significantly over that time span.
+We used our classifier to identify trends in toxicity. We explored whether the increase in discussion about toxicity corresponded with an actual increase in toxicity. We also explored toxicity across different communities to see whether some communities were more toxic than others. 
+
+\subsection{Toxicity over time} 
+There has been more talk recently about burnout in Open Source. We explored whether this increase in dialogue was because of a similar increase in toxicity. 
+
+We explored whether the percentage of toxic comments on Github has increased over time. Because of the infeasibility of classifying every issue on Github, we selected all the issues from each second monday from January 2012-December 2018. We selected the day so to account for potential confounding factors such as the day of the week, or the time of the month. 
+
+We see that toxicity has in fact decreased over the past several years, with an average of 6 toxic comments for every 1000. This implies that, while there has been more discourse on burnout, it might be because of hightened awareness rather than any increase in toxicity. 
  
-\includegraphics[width=10cm]{issues_per_month.png}
+\begin{figure} 
+\includegraphics[width=7cm]{toxic_per_month.png}
+\caption{Toxicity has decreased since 2012}
+\end{figure}
 
 \subsection{Corporate vs. Non-Corporate} 
-We explored whether corporate projects are more or less toxic than non-corporate projects. To find corporate issues, we found the top 1000 projects run by some organization or company, removed non-English projects, sorted by number of contributors from that organization, and took the top 100 issues. None of the top 100 projects were from academic or university sources. We selected all the issues from each of the top 100 projects. 
+In recent years, Github has had an influx of projects run or funded by corporate companies. We explored whether this influx has a potentially toxic influence by comparing the toxicity of corporate projects to non-corporate projects. To find corporate issues, we found the top 1000 projects run by some organization or company, removed non-English projects, sorted by number of contributors from that organization, and took the top 100 issues. We wantedp rojects that were not only funded by companies, but also contributed to by members from those companies, because these projects would then have a large corporate influence. None of the top 100 projects were from academic or university sources. We selected all the issues from each of the top 100 projects. 
 
 To find non-corporate projects, we sorted the most popular projects by the number of stars, and selected the top 100 projects that were not run by some company or organization. Again, none of the top 100 were from academic sources. We again selected all the issues from each of the top 100 projects. 
 
 \subsection{Community differences} 
-Previous work suggests that there exists cultural differences between communities \cite{b15}. We explored toxicity differences between issues from projects in three popular languages: Python, Java and Javascript \cite{b16}. We selected 1000 issues at random from each of the three languages, and classify them as toxic or non-toxic. 
+Previous work suggests that there exists cultural differences between communities \cite{bogart2016break}. We used languages as a proxy for communities and explored toxicity differences between issues from projects in seven languages: Python, Java, Javascript, Haskell, Lua, R, and Ruby. We tried to pick a variety of langauges so we could identify what factors affected toxicity. We selected all issues from the 30 most popular projects in each of these languages, and classified each issue as toxic or non-toxic. 
+
+\begin{figure}
+	\includegraphics[width=7cm]{box_plot.png}
+	\caption{There are differences in toxicity between different languages} 
+\end{figure}
+
+We find that R is the project with the least toxicity, and ruby is the project with the most toxicity. This corresponds with the amount of fun that a project has, with the least toxic projects also being those that have the least fun \cite{bogart2016break}. 
 
 \section{Results and Discussion}
 Results and Discussion
@@ -110,30 +180,14 @@ Results and Discussion
 \section{Threats to Validity}
 Threats to Validity
 
+
 \section{Conclusion}
 Conclusion
 
 
-\begin{thebibliography}{00}
-\bibitem{b1} Cohen, Jacob. Statistical power analysis for the behavioral sciences. Routledge, 2013.
-\bibitem{b2} Georgios Gousios: The GHTorrent dataset and tool suite. MSR 2013: 233-236
-\bibitem{b3} Gachechiladze, Daviti, et al. "Anger and its direction in collaborative software development." 2017 IEEE/ACM 39th International Conference on Software Engineering: New Ideas and Emerging Technologies Results Track (ICSE-NIER). IEEE, 2017.
-\bibitem{b4} Scott, Mike, and Christopher Tribble. Textual patterns: Key words and corpus analysis in language education. Vol. 22. John Benjamins Publishing, 2006.
-\bibitem{b5} Bonett, Douglas G. "Transforming odds ratios into correlations for meta-analytic research." (2007): 254.
-\bibitem{b6} Görnitz, Nico, et al. "Toward supervised anomaly detection." Journal of Artificial Intelligence Research 46 (2013): 235-262. 
-\bibitem{b7}  “https://www.perspectiveapi.com/,”
-\bibitem{b8} Danescu-Niculescu-Mizil, Cristian, et al. "A computational approach to politeness with application to social factors." arXiv preprint arXiv:1306.6078 (2013).
-\bibitem{b9} Hutto, Clayton J., and Eric Gilbert. "Vader: A parsimonious rule-based model for sentiment analysis of social media text." Eighth international AAAI conference on weblogs and social media. 2014.
-\bibitem{b10} Zhang, Justine, et al. "Conversations gone awry: Detecting early signs of conversational failure." arXiv preprint arXiv:1805.05345 (2018).
-\bibitem{b11} Joachims, Thorsten. "Text categorization with support vector machines: Learning with many relevant features." European conference on machine learning. Springer, Berlin, Heidelberg, 1998.
-\bibitem{b12} Monroe, B., Colaresi, M.,\& Quinn, K. (n.d.). Fightin' Words: Lexical Feature Selection and Evaluation for Identifying the Content of Political Conflict. Political Analysis, 16(4), 372-403. doi:10.1093/pan/mpn018
-\bibitem{b13} Speer, Robert, et al. "wordfreq: v1. 5.1." (2016).
-\bibitem{b14} Fearn, T. (2010). Double Cross-Validation. NIR News, 21(5), 14–15. https://doi.org/10.1255/nirn.1194
-\bibitem{b15} Bogart, Christopher, et al. "How to break an API: cost negotiation and community values in three software ecosystems." Proceedings of the 2016 24th ACM SIGSOFT International Symposium on Foundations of Software Engineering. ACM, 2016
-\bibitem{b16} Mearian, Lucas. "The state of the octoverse 2018. Computerworldhttps."
-\bibitem{b17} https://datastudio.google.com/u/0/reporting/0ByGAKP3QmCjLU1JzUGtJdTlNOG8/page/Q3DM
+\bibliographystyle{plain}
+\bibliography{bibliography}
 
-\end{thebibliography}
 
 
 \end{document}

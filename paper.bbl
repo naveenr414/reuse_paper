@@ -1,0 +1,124 @@
+\begin{thebibliography}{10}
+
+\bibitem{perspective}
+Perspective.
+
+\bibitem{antikainen2010rewarding}
+Maria~J Antikainen and Heli~K Vaataja.
+\newblock Rewarding in open innovation communities--how to motivate members.
+\newblock {\em International Journal of Entrepreneurship and Innovation
+  Management}, 11(4):440--456, 2010.
+
+\bibitem{bogart2016break}
+Christopher Bogart, Christian K{\"a}stner, James Herbsleb, and Ferdian Thung.
+\newblock How to break an api: cost negotiation and community values in three
+  software ecosystems.
+\newblock In {\em Proceedings of the 2016 24th ACM SIGSOFT International
+  Symposium on Foundations of Software Engineering}, pages 109--120. ACM, 2016.
+
+\bibitem{burke2008mind}
+Moira Burke and Robert Kraut.
+\newblock Mind your ps and qs: the impact of politeness and rudeness in online
+  communities.
+\newblock In {\em Proceedings of the 2008 ACM conference on Computer supported
+  cooperative work}, pages 281--284. ACM, 2008.
+
+\bibitem{danescu2013computational}
+Cristian Danescu-Niculescu-Mizil, Moritz Sudhof, Dan Jurafsky, Jure Leskovec,
+  and Christopher Potts.
+\newblock A computational approach to politeness with application to social
+  factors.
+\newblock {\em arXiv preprint arXiv:1306.6078}, 2013.
+
+\bibitem{eghbal2016roads}
+Nadia Eghbal.
+\newblock {\em Roads and bridges: The unseen labor behind our digital
+  infrastructure}.
+\newblock Ford Foundation, 2016.
+
+\bibitem{fearn2010double}
+Tom Fearn.
+\newblock Double cross-validation.
+\newblock {\em NIR news}, 21(5):14--15, 2010.
+
+\bibitem{gachechiladze2017anger}
+Daviti Gachechiladze, Filippo Lanubile, Nicole Novielli, and Alexander
+  Serebrenik.
+\newblock Anger and its direction in collaborative software development.
+\newblock In {\em 2017 IEEE/ACM 39th International Conference on Software
+  Engineering: New Ideas and Emerging Technologies Results Track (ICSE-NIER)},
+  pages 11--14. IEEE, 2017.
+
+\bibitem{Gousi13}
+Georgios Gousios.
+\newblock The ghtorrent dataset and tool suite.
+\newblock In {\em Proceedings of the 10th Working Conference on Mining Software
+  Repositories}, MSR '13, pages 233--236, Piscataway, NJ, USA, 2013. IEEE
+  Press.
+
+\bibitem{hutto2014vader}
+Clayton~J Hutto and Eric Gilbert.
+\newblock Vader: A parsimonious rule-based model for sentiment analysis of
+  social media text.
+\newblock In {\em Eighth international AAAI conference on weblogs and social
+  media}, 2014.
+
+\bibitem{jadin2013personality}
+Tanja Jadin, Timo Gnambs, and Bernad Batinic.
+\newblock Personality traits and knowledge sharing in online communities.
+\newblock {\em Computers in Human Behavior}, 29(1):210--216, 2013.
+
+\bibitem{joachims1998text}
+Thorsten Joachims.
+\newblock Text categorization with support vector machines: Learning with many
+  relevant features.
+\newblock In {\em European conference on machine learning}, pages 137--142.
+  Springer, 1998.
+
+\bibitem{mohan2017impact}
+Shruthi Mohan, Apala Guha, Michael Harris, Fred Popowich, Ashley Schuster, and
+  Chris Priebe.
+\newblock The impact of toxic language on the health of reddit communities.
+\newblock In {\em Canadian Conference on Artificial Intelligence}, pages
+  51--56. Springer, 2017.
+
+\bibitem{monroe2008fightin}
+Burt~L Monroe, Michael~P Colaresi, and Kevin~M Quinn.
+\newblock Fightin'words: Lexical feature selection and evaluation for
+  identifying the content of political conflict.
+\newblock {\em Political Analysis}, 16(4):372--403, 2008.
+
+\bibitem{o2007emergence}
+Siobh{\'a}n O'mahony and Fabrizio Ferraro.
+\newblock The emergence of governance in an open source community.
+\newblock {\em Academy of Management Journal}, 50(5):1079--1106, 2007.
+
+\bibitem{raymond1999cathedral}
+Eric Raymond.
+\newblock The cathedral and the bazaar.
+\newblock {\em Knowledge, Technology \& Policy}, 12(3):23--49, 1999.
+
+\bibitem{speer2016wordfreq}
+Robert Speer, Joshua Chin, Andrew Lin, Lance Nathan, and Sara Jewett.
+\newblock wordfreq: v1. 5.1, 2016.
+
+\bibitem{wang2003assessing}
+Youcheng Wang and Daniel~R Fesenmaier.
+\newblock Assessing motivation of contribution in online communities: An
+  empirical investigation of an online travel community.
+\newblock {\em Electronic markets}, 13(1):33--45, 2003.
+
+\bibitem{warner2012detecting}
+William Warner and Julia Hirschberg.
+\newblock Detecting hate speech on the world wide web.
+\newblock In {\em Proceedings of the second workshop on language in social
+  media}, pages 19--26. Association for Computational Linguistics, 2012.
+
+\bibitem{zhang2018conversations}
+Justine Zhang, Jonathan~P Chang, Cristian Danescu-Niculescu-Mizil, Lucas Dixon,
+  Yiqing Hua, Nithum Thain, and Dario Taraborelli.
+\newblock Conversations gone awry: Detecting early signs of conversational
+  failure.
+\newblock {\em arXiv preprint arXiv:1805.05345}, 2018.
+
+\end{thebibliography}
